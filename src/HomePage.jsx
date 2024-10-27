@@ -236,7 +236,7 @@ const HomePage = () => {
                       </div>
                       <div>
                         <a className="forgot-password form-label" href="/">
-                          <div>
+                          <div className="mt-3">
                             Forgot your password? Please call Technical Support.
                             <br />
                             <br />
