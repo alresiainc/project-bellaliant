@@ -224,7 +224,7 @@ const HomePage = () => {
                             for="styledCheckbox"
                             className="custom-label form-label ms-2"
                           >
-                            I'm not a robot
+                           Remember my email address
                           </label>
                         </div>
                       </div>
